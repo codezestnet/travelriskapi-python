@@ -1,28 +1,36 @@
-#!/usr/bin/python3
-
 import logging
+from typing import Optional
 import requests
-
 from classes import Countries
 
-api_urlbase = "https://travelriskapi.com/api/v1/"
-api_key = "<PASTE API CODE HERE>"
+def fetch_countries(api_urlbase: str, api_key: str) -> Optional[Countries]:
 
-url = f"{api_urlbase}countries?limit=250"
+    url = f"{api_urlbase}countries?limit=250"
 
-# Set the headers with the API key
-headers = {"X-API-Key": f"{api_key}"}
+    # Set the headers with the API key
+    headers = {"X-API-Key": f"{api_key}"}
 
-# Make the GET Request to the API
-payload = {}
-response = requests.request("GET", url, headers=headers, data=payload)
+    # Make the GET Request to the API
+    payload = {}
+    try:
+        response = requests.request("GET", url, headers=headers, data=payload)
 
-# Check if the request was successful
-if response.status_code == 200:
-    logging.info("Successfully fetched country data from the API.")
+        # Check if the request was successful
+        if response.status_code == 200:
+    
+            known = Countries.__dataclass_fields__
+            payload = {k: v for k, v in response.json().items() if k in known}
+            return Countries(**payload)
+    
+        else:
+    
+            return None
 
-    countries = Countries(**response.json())
+    except requests.RequestException as e:
+        logging.error(f"Error fetching country data from the API: {e}")
+        return None 
 
-    print(f"Countries Data: {countries}") 
-else:
-    logging.error("Failed to fetch country data from the API.") 
+    except Exception as e:
+        logging.error(f"Unexpected error: {e}")
+        return None
+

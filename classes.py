@@ -6,6 +6,8 @@ class Filters:
     severity: Optional[str] = None
     alert_type: Optional[str] = None
     country_iso: Optional[str] = None
+    days: Optional[int] = None
+    updated_since: Optional[str] = None
 
 @dataclass
 class AlertData:
@@ -19,10 +21,10 @@ class AlertData:
     description: str
     event_date: str
     created_at: str
+    updated_at: str
     source: str
     external_id: str
     polygon: Optional[str] = None
-    country_code: Optional[str] = None
 
 @dataclass
 class Alerts:
@@ -44,7 +46,6 @@ class CountryData:
     base_risk_score: float
     active_alerts: int
     last_updated: str
-    country_code: Optional[str] = None
 
 @dataclass
 class Countries:
